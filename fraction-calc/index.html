@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="author" content="Kemi-Amu" />
+		<title>Fraction Approximation Calculator</title>
+		<link rel="icon" href="../assets/favicon.svg" />
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+		/>
+		<script
+			defer
+			src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+		></script>
+		<style>
+			input {
+				font-family: monospace;
+			}
+		</style>
+		<script>
+			document.addEventListener("alpine:init", () => {
+				Alpine.data("approximator", () => ({
+					x1: 0,
+					y1: 0,
+					x2: 0,
+					y2: 0,
+					step: 10,
+					results: [],
+
+					fractionApproximation() {
+						const dx = Math.abs(this.x1 - this.x2);
+						const dy = Math.abs(this.y1 - this.y2);
+						if (dx === 0 && dy === 0) return [];
+
+						const ratio = dx > dy ? dx / dy : dy / dx;
+						const integer = Math.floor(ratio);
+						let remainder = ratio - integer;
+						const convergents = [[integer, 1]];
+						if (remainder < 1e-7 || this.step <= 1)
+							return convergents;
+
+						let [h0, k0] = [1, 0];
+						let [h1, k1] = [integer, 1];
+
+						for (
+							let i = 1;
+							i < this.step && remainder > 1e-7;
+							i++
+						) {
+							const reciprocal = 1 / remainder;
+							const a = Math.floor(reciprocal);
+							remainder = reciprocal - a;
+
+							const [h2, k2] = [a * h1 + h0, a * k1 + k0];
+							convergents.push([h2, k2]);
+
+							[h0, k0] = [h1, k1];
+							[h1, k1] = [h2, k2];
+						}
+
+						return convergents;
+					},
+
+					calculate() {
+						this.results = this.fractionApproximation().map(
+							([p, q]) => ({
+								fraction: `${p}/${q}`,
+								value: Number((p / q).toFixed(7)),
+							}),
+						);
+					},
+				}));
+			});
+		</script>
+	</head>
+	<body class="container">
+		<main x-data="approximator">
+			<hgroup>
+				<h1>Rational Approximation Calculator</h1>
+				<h2>
+					Find simple fractions that approximate the ratio between two
+					points
+				</h2>
+			</hgroup>
+
+			<div class="grid">
+				<div>
+					<label>Point 1</label>
+					<input type="number" x-model="x1" placeholder="X" />
+					<input type="number" x-model="y1" placeholder="Y" />
+
+					<label>Point 2</label>
+					<input type="number" x-model="x2" placeholder="X" />
+					<input type="number" x-model="y2" placeholder="Y" />
+
+					<label for="step">Step</label>
+					<input
+						type="number"
+						id="step"
+						x-model="step"
+						placeholder="Step"
+						value="10"
+					/>
+
+					<button @click="calculate()" class="primary">
+						Calculate
+					</button>
+				</div>
+				<div>
+					<h3>Result</h3>
+					<div id="result">
+						<table>
+							<thead>
+								<tr>
+									<th>Fraction</th>
+									<th>Value</th>
+								</tr>
+							</thead>
+							<tbody>
+								<template x-for="result in results">
+									<tr>
+										<td x-text="result.fraction"></td>
+										<td x-text="result.value"></td>
+									</tr>
+								</template>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</main>
+		<footer>
+			<p><a href="../">← Back to Home</a></p>
+		</footer>
+	</body>
+</html>

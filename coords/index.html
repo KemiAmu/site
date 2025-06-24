@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="author" content="Kemi-Amu" />
+		<title>MC Coordinate Conversion Tool</title>
+		<link rel="icon" href="../assets/favicon.svg" />
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+		/>
+		<script
+			defer
+			src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+		></script>
+		<script>
+			document.addEventListener("alpine:init", () => {
+				Alpine.data("app", () => ({
+					x: null,
+					z: null,
+					MCA_SIZE: 512,
+					MAP_SIZE: 128,
+					CHUNK_SIZE: 16,
+					NETHER_RATIO: 8,
+
+					getCoords() {
+						const coords = [];
+						if (this.x !== null && !isNaN(parseFloat(this.x)))
+							coords.push(parseFloat(this.x));
+						if (this.z !== null && !isNaN(parseFloat(this.z)))
+							coords.push(parseFloat(this.z));
+						return coords;
+					},
+
+					_format(transform) {
+						const coords = this.getCoords();
+						return coords.length
+							? coords.map(transform).join(", ")
+							: "";
+					},
+
+					nether() {
+						return this._format((c) =>
+							Math.floor(c / this.NETHER_RATIO).toFixed(0),
+						);
+					},
+
+					anether() {
+						return this._format((c) =>
+							(c * this.NETHER_RATIO).toFixed(2),
+						);
+					},
+
+					chunk() {
+						return this._format((c) =>
+							Math.floor(c / this.CHUNK_SIZE).toFixed(0),
+						);
+					},
+
+					achunk() {
+						return this._format((c) =>
+							(c * this.CHUNK_SIZE).toFixed(2),
+						);
+					},
+
+					chunk_rel() {
+						return this._format((c) => {
+							const chunkStart =
+								Math.floor(c / this.CHUNK_SIZE) *
+								this.CHUNK_SIZE;
+							return (c - chunkStart).toFixed(2);
+						});
+					},
+
+					chunk_start() {
+						return this._format((c) =>
+							(
+								Math.floor(c / this.CHUNK_SIZE) *
+								this.CHUNK_SIZE
+							).toFixed(2),
+						);
+					},
+
+					chunk_end() {
+						return this._format((c) =>
+							(
+								Math.floor(c / this.CHUNK_SIZE) *
+									this.CHUNK_SIZE +
+								this.CHUNK_SIZE
+							).toFixed(2),
+						);
+					},
+
+					map() {
+						return this._format((c) =>
+							Math.floor(c / this.MAP_SIZE + 0.5).toFixed(0),
+						);
+					},
+
+					amap() {
+						return this._format((c) =>
+							((c - 0.5) * this.MAP_SIZE).toFixed(2),
+						);
+					},
+
+					map_rel() {
+						return this._format((c) => {
+							const mapCenter =
+								Math.floor(c / this.MAP_SIZE + 0.5) *
+									this.MAP_SIZE -
+								this.MAP_SIZE / 2;
+							return (c - mapCenter).toFixed(2);
+						});
+					},
+
+					map_start() {
+						return this._format((c) =>
+							(
+								Math.floor(c / this.MAP_SIZE + 0.5) *
+									this.MAP_SIZE -
+								this.MAP_SIZE / 2
+							).toFixed(2),
+						);
+					},
+
+					map_end() {
+						return this._format((c) =>
+							(
+								Math.floor(c / this.MAP_SIZE + 0.5) *
+									this.MAP_SIZE +
+								this.MAP_SIZE / 2
+							).toFixed(2),
+						);
+					},
+
+					mca() {
+						return this._format((c) =>
+							Math.floor(c / this.MCA_SIZE).toFixed(0),
+						);
+					},
+				}));
+			});
+		</script>
+	</head>
+	<body class="container" x-data="app">
+		<main>
+			<hgroup>
+				<h1>MC Coordinate Conversion Tool</h1>
+				<h2>Convert Minecraft coordinates between units</h2>
+			</hgroup>
+
+			<!-- Input fields -->
+			<div class="grid">
+				<!-- X -->
+				<div>
+					<label>
+						X Coordinate
+						<input
+							type="text"
+							placeholder="X Coordinate"
+							x-model="x"
+						/>
+					</label>
+				</div>
+
+				<!-- Z -->
+				<div>
+					<label>
+						Z Coordinate
+						<input
+							type="text"
+							placeholder="Z Coordinate"
+							x-model="z"
+						/>
+					</label>
+				</div>
+			</div>
+
+			<!-- Results -->
+			<div class="grid">
+				<!-- Nether -->
+				<div>
+					<article>
+						<header>
+							<h2>Nether</h2>
+							<p>
+								Coordinates correspondence between Overworld and
+								Nether, commonly used for transportation
+								construction
+							</p>
+						</header>
+						<p>Nether: <span x-text="nether"></span></p>
+						<p>Reverse: <span x-text="anether"></span></p>
+					</article>
+				</div>
+
+				<!-- Chunk -->
+				<div>
+					<article>
+						<header>
+							<h2>Chunk</h2>
+							<p>
+								Correspondence between coordinates and chunks,
+								commonly used for facility construction
+							</p>
+						</header>
+						<div class="grid">
+							<div>
+								<p>Chunk: <span x-text="chunk"></span></p>
+								<p>
+									Relative: <span x-text="chunk_rel"></span>
+								</p>
+							</div>
+							<div>
+								<p>Reverse: <span x-text="achunk"></span></p>
+								<p>
+									Range: <span x-text="chunk_start"></span> to
+									<span x-text="chunk_end"></span>
+								</p>
+							</div>
+						</div>
+					</article>
+				</div>
+			</div>
+
+			<div class="grid">
+				<!-- Map Block -->
+				<div>
+					<article>
+						<header>
+							<h2>Map Block</h2>
+							<p>
+								Correspondence between coordinates and level 0
+								maps, commonly used for making map art
+							</p>
+						</header>
+						<div class="grid">
+							<div>
+								<p>Map: <span x-text="map"></span></p>
+								<p>Relative: <span x-text="map_rel"></span></p>
+							</div>
+							<div>
+								<p>Reverse: <span x-text="amap"></span></p>
+								<p>
+									Range: <span x-text="map_start"></span> to
+									<span x-text="map_end"></span>
+								</p>
+							</div>
+						</div>
+					</article>
+				</div>
+
+				<!-- Region File -->
+				<div>
+					<article>
+						<header>
+							<h2>Region File</h2>
+							<p>For converting .mca files in saves</p>
+						</header>
+						<p>Region file: <span x-text="mca"></span></p>
+					</article>
+				</div>
+			</div>
+		</main>
+
+		<footer>
+			<p><a href="../">← Back to Home</a></p>
+		</footer>
+	</body>
+</html>

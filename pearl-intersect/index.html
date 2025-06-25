@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="author" content="Kemi-Amu" />
+		<title>Ender Pearl Intersection Calculator</title>
+		<link rel="icon" href="../assets/favicon.svg" />
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+		/>
+		<script
+			defer
+			src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+		></script>
+		<style>
+			input {
+				font-family: monospace;
+			}
+			.coordinate-result {
+				font-family: monospace;
+			}
+		</style>
+		<script>
+			document.addEventListener("alpine:init", () => {
+				Alpine.data("pearlIntersect", () => ({
+					throw1: { x: 0, z: 0, yaw: 0 },
+					throw2: { x: 10, z: 0, yaw: 90 },
+					intersection: null,
+					error: null,
+
+					calculate() {
+						this.error = null;
+						this.intersection = null;
+
+						const toRad = (deg) => (deg * Math.PI) / 180;
+						const yaw1Rad = toRad(this.throw1.yaw);
+						const yaw2Rad = toRad(this.throw2.yaw);
+
+						const getDirection = (yawRad) => ({
+							dx: -Math.sin(yawRad),
+							dz: -Math.cos(yawRad),
+						});
+
+						const dir1 = getDirection(yaw1Rad);
+						const dir2 = getDirection(yaw2Rad);
+
+						const denominator =
+							dir1.dx * dir2.dz - dir2.dx * dir1.dz;
+
+						if (Math.abs(denominator) < 1e-3) {
+							this.error =
+								"Lines are parallel! No intersection found.";
+							return;
+						}
+
+						const deltaZ = this.throw2.z - this.throw1.z;
+						const deltaX = this.throw2.x - this.throw1.x;
+						const t =
+							(dir1.dx * deltaZ - dir1.dz * deltaX) / denominator;
+
+						this.intersection = {
+							x: this.throw2.x + t * dir2.dx,
+							z: this.throw2.z + t * dir2.dz,
+						};
+					},
+				}));
+			});
+		</script>
+	</head>
+	<body class="container" x-data="pearlIntersect" x-init="calculate()">
+		<main>
+			<hgroup>
+				<h1>Ender Pearl Intersection Calculator</h1>
+				<h2>Calculate stronghold location from two pearl throws</h2>
+			</hgroup>
+
+			<div class="grid">
+				<!-- Input Section -->
+				<div>
+					<div class="grid">
+						<!-- First Throw -->
+						<div>
+							<article>
+								<header>
+									<h2>First Throw</h2>
+								</header>
+								<label>
+									X Position
+									<input
+										type="number"
+										x-model.number="throw1.x"
+										placeholder="X"
+									/>
+								</label>
+								<label>
+									Z Position
+									<input
+										type="number"
+										x-model.number="throw1.z"
+										placeholder="Z"
+									/>
+								</label>
+								<label>
+									Yaw Angle (-180 to 180)
+									<input
+										type="number"
+										x-model.number="throw1.yaw"
+										min="-180"
+										max="180"
+										placeholder="Yaw"
+									/>
+								</label>
+							</article>
+						</div>
+
+						<!-- Second Throw -->
+						<div>
+							<article>
+								<header>
+									<h2>Second Throw</h2>
+								</header>
+								<label>
+									X Position
+									<input
+										type="number"
+										x-model.number="throw2.x"
+										placeholder="X"
+									/>
+								</label>
+								<label>
+									Z Position
+									<input
+										type="number"
+										x-model.number="throw2.z"
+										placeholder="Z"
+									/>
+								</label>
+								<label>
+									Yaw Angle (-180 to 180)
+									<input
+										type="number"
+										x-model.number="throw2.yaw"
+										min="-180"
+										max="180"
+										placeholder="Yaw"
+									/>
+								</label>
+							</article>
+						</div>
+					</div>
+
+					<div>
+						<button @click="calculate()" class="primary">
+							Calculate
+						</button>
+					</div>
+				</div>
+
+				<!-- Result Section -->
+				<div>
+					<article>
+						<header>
+							<h2>Stronghold Location</h2>
+							<p>Approximate coordinates of the stronghold</p>
+						</header>
+						<div id="result" class="coordinate-result">
+							<template x-if="error">
+								<p class="error" x-text="error"></p>
+							</template>
+							<template x-if="intersection">
+								<div>
+									<p>
+										X:
+										<span
+											x-text="intersection.x.toFixed(2)"
+										></span>
+									</p>
+									<p>
+										Z:
+										<span
+											x-text="intersection.z.toFixed(2)"
+										></span>
+									</p>
+								</div>
+							</template>
+						</div>
+					</article>
+				</div>
+			</div>
+		</main>
+		<footer>
+			<p><a href="../">← Back to Home</a></p>
+			<p>
+				Unofficial Minecraft tool. Not affiliated with Mojang or
+				Microsoft.
+			</p>
+		</footer>
+	</body>
+</html>

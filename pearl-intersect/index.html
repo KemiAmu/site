@@ -40,7 +40,7 @@
 
 						const getDirection = (yawRad) => ({
 							dx: -Math.sin(yawRad),
-							dz: -Math.cos(yawRad),
+							dz: Math.cos(yawRad),
 						});
 
 						const dir1 = getDirection(yaw1Rad);

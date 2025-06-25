@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="author" content="Kemi-Amu" />
+		<title>Circle Intersection Calculator</title>
+		<link rel="icon" href="../assets/favicon.svg" />
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+		/>
+		<script
+			defer
+			src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+		></script>
+		<style>
+			input {
+				font-family: monospace;
+			}
+			.coordinate-result {
+				font-family: monospace;
+			}
+		</style>
+		<script>
+			document.addEventListener("alpine:init", () => {
+				Alpine.data("circleIntersect", () => ({
+					circle1: { x: 0, y: 0, r: 5 },
+					circle2: { x: 5, y: 0, r: 5 },
+					intersections: [],
+
+					calculate() {
+						const { circle1, circle2 } = this;
+						const x1 = circle1.x;
+						const y1 = circle1.y;
+						const r1 = circle1.r;
+						const x2 = circle2.x;
+						const y2 = circle2.y;
+						const r2 = circle2.r;
+
+						const points = this.circleIntersection(
+							x1,
+							y1,
+							r1,
+							x2,
+							y2,
+							r2,
+						);
+						this.intersections = points.map((p) => ({
+							x: p[0].toFixed(4),
+							y: p[1].toFixed(4),
+						}));
+					},
+
+					circleIntersection(x1, y1, r1, x2, y2, r2) {
+						const dx = x2 - x1;
+						const dy = y2 - y1;
+						const dSquared = dx * dx + dy * dy;
+						const r1Squared = r1 * r1;
+						const r2Squared = r2 * r2;
+						const minDistance = Math.abs(r1 - r2);
+						const maxDistance = r1 + r2;
+
+						if (
+							dSquared === 0 ||
+							dSquared < minDistance * minDistance ||
+							dSquared > maxDistance * maxDistance
+						) {
+							return [];
+						}
+
+						const distance = Math.sqrt(dSquared);
+						const invD = 1 / distance;
+						const a =
+							(r1Squared - r2Squared + dSquared) * 0.5 * invD;
+						const h = Math.sqrt(Math.max(0, r1Squared - a * a));
+						const ux = dx * invD;
+						const uy = dy * invD;
+						const mx = x1 + a * ux;
+						const my = y1 + a * uy;
+
+						return [
+							[mx - uy * h, my + ux * h],
+							[mx + uy * h, my - ux * h],
+						];
+					},
+				}));
+			});
+		</script>
+	</head>
+	<body class="container" x-data="circleIntersect" x-init="calculate()">
+		<main>
+			<hgroup>
+				<h1>Circle Intersection Calculator</h1>
+				<h2>Calculate intersection points between two circles</h2>
+			</hgroup>
+
+			<div class="grid">
+				<!-- Left Column: Inputs -->
+				<div>
+					<div class="grid">
+						<!-- Circle 1 Inputs -->
+						<div>
+							<article>
+								<header>
+									<h2>Circle 1</h2>
+								</header>
+								<label>
+									Center X
+									<input
+										type="number"
+										x-model.number="circle1.x"
+										placeholder="X"
+									/>
+								</label>
+								<label>
+									Center Y
+									<input
+										type="number"
+										x-model.number="circle1.y"
+										placeholder="Y"
+									/>
+								</label>
+								<label>
+									Radius
+									<input
+										type="number"
+										x-model.number="circle1.r"
+										min="0"
+										step="0.1"
+										placeholder="Radius"
+									/>
+								</label>
+							</article>
+						</div>
+
+						<!-- Circle 2 Inputs -->
+						<div>
+							<article>
+								<header>
+									<h2>Circle 2</h2>
+								</header>
+								<label>
+									Center X
+									<input
+										type="number"
+										x-model.number="circle2.x"
+										placeholder="X"
+									/>
+								</label>
+								<label>
+									Center Y
+									<input
+										type="number"
+										x-model.number="circle2.y"
+										placeholder="Y"
+									/>
+								</label>
+								<label>
+									Radius
+									<input
+										type="number"
+										x-model.number="circle2.r"
+										min="0"
+										step="0.1"
+										placeholder="Radius"
+									/>
+								</label>
+							</article>
+						</div>
+					</div>
+
+					<div>
+						<button @click="calculate()" class="primary">
+							Calculate
+						</button>
+					</div>
+				</div>
+
+				<!-- Right Column: Results -->
+				<div>
+					<article>
+						<header>
+							<h2>Intersection Points</h2>
+						</header>
+						<div id="result" class="coordinate-result">
+							<template x-if="intersections.length === 0">
+								<p>The circles do not intersect.</p>
+							</template>
+							<template x-for="(point, index) in intersections">
+								<p>
+									Point <span x-text="index + 1"></span>:
+									<span>
+										(<span x-text="point.x"></span>,
+										<span x-text="point.y"></span>)
+									</span>
+								</p>
+							</template>
+						</div>
+					</article>
+				</div>
+			</div>
+		</main>
+		<footer>
+			<p><a href="../">← Back to Home</a></p>
+		</footer>
+	</body>
+</html>

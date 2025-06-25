@@ -62,7 +62,7 @@
 						const deltaZ = this.throw2.z - this.throw1.z;
 						const deltaX = this.throw2.x - this.throw1.x;
 						const t =
-							(dir1.dx * deltaZ - dir1.dz * deltaX) / denominator;
+							(dir1.dz * deltaX - dir1.dx * deltaZ) / denominator;
 
 						this.intersection = {
 							x: this.throw2.x + t * dir2.dx,

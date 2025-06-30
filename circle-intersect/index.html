@@ -29,30 +29,22 @@
 		<script>
 			document.addEventListener("alpine:init", () => {
 				Alpine.data("circleIntersect", () => ({
-					circle1: { x: 0, y: 0, r: 5 },
-					circle2: { x: 5, y: 0, r: 5 },
+					circle1: { x: null, y: null, r: null },
+					circle2: { x: null, y: null, r: null },
 					intersections: [],
 
 					calculate() {
-						const { circle1, circle2 } = this;
-						const x1 = circle1.x;
-						const y1 = circle1.y;
-						const r1 = circle1.r;
-						const x2 = circle2.x;
-						const y2 = circle2.y;
-						const r2 = circle2.r;
-
 						const points = this.circleIntersection(
-							x1,
-							y1,
-							r1,
-							x2,
-							y2,
-							r2,
+							this.circle1.x,
+							this.circle1.y,
+							this.circle1.r,
+							this.circle2.x,
+							this.circle2.y,
+							this.circle2.r,
 						);
-						this.intersections = points.map((p) => ({
-							x: p[0].toFixed(4),
-							y: p[1].toFixed(4),
+						this.intersections = points.map(([x, y]) => ({
+							x: x.toFixed(4),
+							y: y.toFixed(4),
 						}));
 					},
 

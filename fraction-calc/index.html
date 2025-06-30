@@ -26,17 +26,19 @@
 		<script>
 			document.addEventListener("alpine:init", () => {
 				Alpine.data("approximator", () => ({
-					x1: 0,
-					y1: 0,
-					x2: 0,
-					y2: 0,
+					x1: null,
+					y1: null,
+					x2: null,
+					y2: null,
 					step: 10,
 					results: [],
 
+					// TODO: Still has precision issues
 					fractionApproximation() {
-						const dx = Math.abs(this.x1 - this.x2);
-						const dy = Math.abs(this.y1 - this.y2);
-						if (dx === 0 && dy === 0) return [];
+						const dx =
+							Math.abs((this.x1 || 0) - (this.x2 || 0)) || 1;
+						const dy =
+							Math.abs((this.y1 || 0) - (this.y2 || 0)) || 1;
 
 						const ratio = dx > dy ? dx / dy : dy / dx;
 						const integer = Math.floor(ratio);
@@ -92,18 +94,18 @@
 			<div class="grid">
 				<div>
 					<label>Point 1</label>
-					<input type="number" x-model="x1" placeholder="X" />
-					<input type="number" x-model="y1" placeholder="Y" />
+					<input type="number" x-model.number="x1" placeholder="X" />
+					<input type="number" x-model.number="y1" placeholder="Y" />
 
 					<label>Point 2</label>
-					<input type="number" x-model="x2" placeholder="X" />
-					<input type="number" x-model="y2" placeholder="Y" />
+					<input type="number" x-model.number="x2" placeholder="X" />
+					<input type="number" x-model.number="y2" placeholder="Y" />
 
 					<label for="step">Step</label>
 					<input
 						type="number"
 						id="step"
-						x-model="step"
+						x-model.number="step"
 						placeholder="Step"
 						value="10"
 					/>

@@ -30,10 +30,8 @@
 
 					getCoords() {
 						const coords = [];
-						if (this.x !== null && !isNaN(parseFloat(this.x)))
-							coords.push(parseFloat(this.x));
-						if (this.z !== null && !isNaN(parseFloat(this.z)))
-							coords.push(parseFloat(this.z));
+						if (this.x) coords.push(this.x);
+						if (this.z) coords.push(this.z);
 						return coords;
 					},
 
@@ -161,9 +159,9 @@
 					<label>
 						X Coordinate
 						<input
-							type="text"
+							type="number"
 							placeholder="X Coordinate"
-							x-model="x"
+							x-model.number="x"
 						/>
 					</label>
 				</div>
@@ -173,9 +171,9 @@
 					<label>
 						Z Coordinate
 						<input
-							type="text"
+							type="number"
 							placeholder="Z Coordinate"
-							x-model="z"
+							x-model.number="z"
 						/>
 					</label>
 				</div>

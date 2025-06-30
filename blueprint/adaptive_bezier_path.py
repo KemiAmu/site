@@ -93,17 +93,17 @@ def cumulative_bezier(
 	"""
 	
 	points = adaptive_bezier_path(p0, p1, p2, p3)
-	
+
 	delta = [[0, 0]]
-	for p0, p1 in zip(points[:-1], points[1:]):
-		d = (p1[0]-p0[0], p1[1]-p0[1])
+	for (x0, y0), (x1, y1) in zip(points, points[1:]):
+		dx, dy = x1 - x0, y1 - y0
 		
-		if d[0]*delta[-1][1] != d[1]*delta[-1][0]:
+		if dx * delta[-1][1] != dy * delta[-1][0]:
 			delta.append([0, 0])
 			
-		delta[-1][0] += d[0]
-		delta[-1][1] += d[1]
-	
+		delta[-1][0] += dx
+		delta[-1][1] += dy
+
 	return [d[0] or d[1] for d in delta]
 
 

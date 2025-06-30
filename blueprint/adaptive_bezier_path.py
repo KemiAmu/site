@@ -34,8 +34,6 @@ def plot_line(
 
 	return points
 
-
-
 def adaptive_bezier_path(
 	p0: tuple[float, float],
 	p1: tuple[float, float],
@@ -80,27 +78,67 @@ def adaptive_bezier_path(
 		for point in plot_line((start[0], start[1]), (end[0], end[1]))
 	]
 
+def cumulative_bezier(
+	p0: tuple[float, float],
+	p1: tuple[float, float],
+	p2: tuple[float, float],
+	p3: tuple[float, float]
+) -> list[int]:
+	"""
+	Computes cumulative movement vectors along a Bezier curve path. The function
+	first generates the curve's pixel coordinates, then calculates directional
+	movement vectors by aggregating consecutive pixel steps with matching slopes.
+	Returns a list of integers representing alternating x and y components of
+	the cumulative movement vectors.
+	"""
+	
+	points = adaptive_bezier_path(p0, p1, p2, p3)
+	
+	delta = [[0, 0]]
+	for p0, p1 in zip(points[:-1], points[1:]):
+		d = (p1[0]-p0[0], p1[1]-p0[1])
+		
+		if d[0]*delta[-1][1] != d[1]*delta[-1][0]:
+			delta.append([0, 0])
+			
+		delta[-1][0] += d[0]
+		delta[-1][1] += d[1]
+	
+	return [d[0] or d[1] for d in delta]
+
 
 
 if __name__ == "__main__":
 
 	import matplotlib.pyplot as plt
 
-	# curve = adaptive_bezier_path(
-	# 	(0, 100),
-	# 	(199, 0),
-	# 	(-99, 0),
-	# 	(100, 100)
-	# )
-
-	curve = adaptive_bezier_path(
-		(0, 0),
-		(70, 0),
-		(100, 30),
+	val = [
+		(0, 100),
+		(199, 0),
+		(-99, 0),
 		(100, 100)
-	)
+	]
+	
+	# val = [
+	# 	(0, 0),
+	# 	(200, 50),
+	# 	(-100, 50),
+	# 	(100, 100)
+	# ]
 
+	curve = adaptive_bezier_path(*val)
+	cumulative = cumulative_bezier(*val)
+
+	# Plot the adaptive bezier curve in blue
 	plt.plot([p[0] for p in curve], [p[1] for p in curve], 'b-')
+
+	# Plot the cumulative vectors in red
+	x, y = curve[0][0], curve[0][1]
+	for dx, dy in zip(cumulative[::2], cumulative[1::2]):
+		plt.plot([x, x + dx], [y, y + dy], 'r-')
+		x += dx
+		y += dy
+
 	plt.gca().set_aspect('equal', adjustable='box')
 	plt.grid(True)
 	plt.show()

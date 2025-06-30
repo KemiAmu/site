@@ -39,13 +39,12 @@ def adaptive_bezier_path(
 	p1: tuple[float, float],
 	p2: tuple[float, float],
 	p3: tuple[float, float]
-) -> list[tuple[int, int]]:
+) -> list[tuple[float, float]]:
 	"""
-	Approximates a cubic Bezier curve (defined by four control points) with a polyline
-	using adaptive subdivision. The algorithm recursively subdivides the curve at the
-	midpoint of parameter intervals until the curve midpoint is within a tolerance of
-	the chord midpoint between the segment endpoints. The resulting segments are then
-	rasterized into integer pixel coordinates using a modified Bresenham line algorithm.
+	Generates a smooth cubic Bezier curve through adaptive subdivision. The algorithm
+	recursively splits the curve segments until the midpoint deviation from the
+	chord approximation falls below a threshold (0.001), ensuring accurate rendering
+	with minimal points. Returns a list of floating-point coordinates.
 	"""
 
 	def _bezier_point(t):
@@ -66,17 +65,13 @@ def adaptive_bezier_path(
 		p_mid = _bezier_point(tm)
 
 		mid = ((p_start[0] + p_end[0]) / 2, (p_start[1] + p_end[1]) / 2)
-		if (p_mid[0] - mid[0])**2 + (p_mid[1] - mid[1])**2 < 0.01:
+		if (p_mid[0] - mid[0])**2 + (p_mid[1] - mid[1])**2 < .001:
 			curve.append(p_end)
 		else:
 			stack.append((tm, t1))
 			stack.append((t0, tm))
-
-	return [(round(p0[0]), round(p0[1]))] + [
-		point
-		for start, end in zip(curve[:-1], curve[1:])
-		for point in plot_line((start[0], start[1]), (end[0], end[1]))
-	]
+	
+	return curve
 
 def cumulative_bezier(
 	p0: tuple[float, float],
@@ -92,7 +87,13 @@ def cumulative_bezier(
 	the cumulative movement vectors.
 	"""
 	
-	points = adaptive_bezier_path(p0, p1, p2, p3)
+	bezier = adaptive_bezier_path(p0, p1, p2, p3)
+	
+	points = [(round(p0[0]), round(p0[1]))] + [
+		point
+		for start, end in zip(bezier[:-1], bezier[1:])
+		for point in plot_line((start[0], start[1]), (end[0], end[1]))
+	]
 
 	delta = [[0, 0]]
 	for (x0, y0), (x1, y1) in zip(points, points[1:]):

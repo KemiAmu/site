@@ -59,14 +59,16 @@
 					},
 
 					calculate() {
-						this.results = this.convergentFraction(
-							Math.abs(this.x1 - this.x2),
-							Math.abs(this.y1 - this.y2),
-							this.step,
-						).map(([p, q]) => ({
-							fraction: `${p}/${q}`,
-							value: Number((p / q).toFixed(7)),
-						}));
+						if (this.x1 !== null && this.y1 !== null && this.x2 !== null && this.y2 !== null) {
+							this.results = this.convergentFraction(
+								Math.abs(this.x1 - this.x2),
+								Math.abs(this.y1 - this.y2),
+								this.step,
+							).map(([p, q]) => ({
+								fraction: `${p}/${q}`,
+								value: Number((p / q).toFixed(7)),
+							}));
+						}
 					},
 				}));
 			});
@@ -85,12 +87,12 @@
 			<div class="grid">
 				<div>
 					<label>Point 1</label>
-					<input type="number" x-model.number="x1" placeholder="X" />
-					<input type="number" x-model.number="y1" placeholder="Y" />
+					<input type="number" x-model.number="x1" placeholder="X" @input="calculate()" />
+					<input type="number" x-model.number="y1" placeholder="Y" @input="calculate()" />
 
 					<label>Point 2</label>
-					<input type="number" x-model.number="x2" placeholder="X" />
-					<input type="number" x-model.number="y2" placeholder="Y" />
+					<input type="number" x-model.number="x2" placeholder="X" @input="calculate()" />
+					<input type="number" x-model.number="y2" placeholder="Y" @input="calculate()" />
 
 					<label for="step">Step</label>
 					<input
@@ -99,11 +101,8 @@
 						x-model.number="step"
 						placeholder="Step"
 						value="10"
+						@input="calculate()"
 					/>
-
-					<button @click="calculate()" class="primary">
-						Calculate
-					</button>
 				</div>
 				<div>
 					<h3>Result</h3>

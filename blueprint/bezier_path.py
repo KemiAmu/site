@@ -24,6 +24,7 @@ def plot_line(
 	sx = 1 if p0[0] < p1[0] else -1
 	sy = 1 if p0[1] < p1[1] else -1
 	
+	# Bresenham 算法只用作以微分方式对结构代数排序；是的，只是排序而以 :3
 	err = .5 * (dx-dy) + dy * sx * (p0[0]-x) - dx * sy * (p0[1]-y)
 
 	points = []
@@ -73,44 +74,46 @@ def adaptive_bezier_path(
 	
 	return curve
 
+from itertools import groupby, pairwise
+from typing import Iterator
+
 def cumulative_bezier(
 	p0: tuple[float, float],
 	p1: tuple[float, float],
 	p2: tuple[float, float],
 	p3: tuple[float, float]
-) -> list[int]:
+) -> list[tuple[int, int]]:
 	"""
-	Computes cumulative movement vectors along a Bezier curve path. The function
-	first generates the curve's pixel coordinates, then calculates directional
-	movement vectors by aggregating consecutive pixel steps with matching slopes.
-	Returns a list of integers representing alternating x and y components of
-	the cumulative movement vectors.
+	Generates pixel-perfect cubic Bezier path by combining adaptive curve approximation
+	with Bresenham line rasterization. Returns a compressed representation of movement
+	vectors where consecutive same-direction moves are merged, stored as (delta, count)
+	tuples. The algorithm preserves curve smoothness while optimizing for plotting
+	efficiency by eliminating redundant intermediate steps.
 	"""
-	
+
+	def direction_changes(points: list[tuple[int, int]]) -> Iterator[int]:
+		dx, dy = 0, 0
+		for (x0, y0), (x1, y1) in pairwise(points):
+			ndx, ndy = x1 - x0, y1 - y0
+			if ndx * dy != ndy * dx:
+				yield dx or dy
+				dx, dy = 0, 0
+			dx += ndx
+			dy += ndy
+		yield dx or dy
+
 	bezier = adaptive_bezier_path(p0, p1, p2, p3)
-	
 	points = [(round(p0[0]), round(p0[1]))] + [
 		point
-		for start, end in zip(bezier[:-1], bezier[1:])
+		for start, end in pairwise(bezier)
 		for point in plot_line((start[0], start[1]), (end[0], end[1]))
 	]
 
-	delta = [[0, 0]]
-	for (x0, y0), (x1, y1) in zip(points, points[1:]):
-		dx, dy = x1 - x0, y1 - y0
-		
-		if dx * delta[-1][1] != dy * delta[-1][0]:
-			delta.append([0, 0])
-			
-		delta[-1][0] += dx
-		delta[-1][1] += dy
-
-	return [d[0] or d[1] for d in delta]
+	return [(k, len(list(g))) for k, g in groupby(direction_changes(points))]
 
 
 
 if __name__ == "__main__":
-
 	import matplotlib.pyplot as plt
 
 	val = [
@@ -120,26 +123,41 @@ if __name__ == "__main__":
 		(100, 100)
 	]
 	
-	# val = [
-	# 	(0, 0),
-	# 	(200, 50),
-	# 	(-100, 50),
-	# 	(100, 100)
-	# ]
-
+	val = [
+		(40, 40),
+		(100, 0),
+		(-100, 0),
+		(100, 100)
+	]
+	
+	# Generate continuous Bezier curve
 	curve = adaptive_bezier_path(*val)
-	cumulative = cumulative_bezier(*val)
+	
+	# Generate rasterized integer path
+	points_list = [(round(val[0][0]), round(val[0][1]))]
+	for i in range(len(curve) - 1):
+		segment_points = plot_line(curve[i], curve[i+1])
+		points_list.extend(segment_points)
 
-	# Plot the adaptive bezier curve in blue
-	plt.plot([p[0] for p in curve], [p[1] for p in curve], 'b-')
-
-	# Plot the cumulative vectors in red
-	x, y = curve[0][0], curve[0][1]
-	for dx, dy in zip(cumulative[::2], cumulative[1::2]):
-		plt.plot([x, x + dx], [y, y + dy], 'r-')
-		x += dx
-		y += dy
-
+	# Plotting
+	plt.figure(figsize=(10, 6))
+	
+	# Plot continuous curve (blue)
+	plt.plot(
+		[p[0] for p in curve],
+		[p[1] for p in curve], 
+		'b-', linewidth=2, label='Continuous Curve'
+	)
+	
+	# Plot rasterized path (red)
+	plt.plot(
+		[p[0] for p in points_list],
+		[p[1] for p in points_list], 
+		'r-', linewidth=1, label='Rasterized Path'
+	)
+	
+	plt.title('Cubic Bezier Curve: Continuous vs Rasterized')
+	plt.legend()
 	plt.gca().set_aspect('equal', adjustable='box')
 	plt.grid(True)
 	plt.show()

@@ -81,87 +81,81 @@
 			</hgroup>
 
 			<div class="grid">
-				<!-- Input Section -->
+				<!-- First Throw -->
 				<div>
-					<div class="grid">
-						<!-- First Throw -->
-						<div>
-							<article>
-								<header>
-									<h2>Throw 1</h2>
-								</header>
-								<label>
-									X Position
-									<input
-										type="number"
-										x-model.number="throw1.x"
-										placeholder="X"
-										@input="calculate()"
-									/>
-								</label>
-								<label>
-									Z Position
-									<input
-										type="number"
-										x-model.number="throw1.z"
-										placeholder="Z"
-										@input="calculate()"
-									/>
-								</label>
-								<label>
-									Yaw Angle (-180 to 180)
-									<input
-										type="number"
-										x-model.number="throw1.yaw"
-										min="-180"
-										max="180"
-										placeholder="Yaw"
-										@input="calculate()"
-									/>
-								</label>
-							</article>
-						</div>
-
-						<!-- Second Throw -->
-						<div>
-							<article>
-								<header>
-									<h2>Throw 2</h2>
-								</header>
-								<label>
-									X Position
-									<input
-										type="number"
-										x-model.number="throw2.x"
-										placeholder="X"
-										@input="calculate()"
-									/>
-								</label>
-								<label>
-									Z Position
-									<input
-										type="number"
-										x-model.number="throw2.z"
-										placeholder="Z"
-										@input="calculate()"
-									/>
-								</label>
-								<label>
-									Yaw Angle (-180 to 180)
-									<input
-										type="number"
-										x-model.number="throw2.yaw"
-										min="-180"
-										max="180"
-										placeholder="Yaw"
-										@input="calculate()"
-									/>
-								</label>
-							</article>
-						</div>
-					</div>
+					<article>
+						<header>
+							<h2>Throw 1</h2>
+						</header>
+						<label>
+							X Position
+							<input
+								type="number"
+								x-model.number="throw1.x"
+								placeholder="X"
+								@input="calculate()"
+							/>
+						</label>
+						<label>
+							Z Position
+							<input
+								type="number"
+								x-model.number="throw1.z"
+								placeholder="Z"
+								@input="calculate()"
+							/>
+						</label>
+						<label>
+							Yaw Angle (-180 to 180)
+							<input
+								type="number"
+								x-model.number="throw1.yaw"
+								min="-180"
+								max="180"
+								placeholder="Yaw"
+								@input="calculate()"
+							/>
+						</label>
+					</article>
 				</div>
 
+				<!-- Second Throw -->
+				<div>
+					<article>
+						<header>
+							<h2>Throw 2</h2>
+						</header>
+						<label>
+							X Position
+							<input
+								type="number"
+								x-model.number="throw2.x"
+								placeholder="X"
+								@input="calculate()"
+							/>
+						</label>
+						<label>
+							Z Position
+							<input
+								type="number"
+								x-model.number="throw2.z"
+								placeholder="Z"
+								@input="calculate()"
+							/>
+						</label>
+						<label>
+							Yaw Angle (-180 to 180)
+							<input
+								type="number"
+								x-model.number="throw2.yaw"
+								min="-180"
+								max="180"
+								placeholder="Yaw"
+								@input="calculate()"
+							/>
+						</label>
+					</article>
+				</div>
 				<!-- Result Section -->
 				<div>
 					<article>

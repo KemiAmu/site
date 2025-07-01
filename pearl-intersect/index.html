@@ -88,16 +88,13 @@
 							<h2>Throw 1</h2>
 						</header>
 						<label>
-							X Position
+							Position
 							<input
 								type="number"
 								x-model.number="throw1.x"
 								placeholder="X"
 								@input="calculate()"
 							/>
-						</label>
-						<label>
-							Z Position
 							<input
 								type="number"
 								x-model.number="throw1.z"
@@ -126,16 +123,13 @@
 							<h2>Throw 2</h2>
 						</header>
 						<label>
-							X Position
+							Position
 							<input
 								type="number"
 								x-model.number="throw2.x"
 								placeholder="X"
 								@input="calculate()"
 							/>
-						</label>
-						<label>
-							Z Position
 							<input
 								type="number"
 								x-model.number="throw2.z"
@@ -170,16 +164,14 @@
 							<template x-if="intersection">
 								<div>
 									<p>
-										X:
-										<span
+										(<span
 											x-text="intersection.x.toFixed(2)"
-										></span>
-									</p>
-									<p>
-										Z:
+										></span
+										>,
 										<span
 											x-text="intersection.z.toFixed(2)"
-										></span>
+										></span
+										>)
 									</p>
 								</div>
 							</template>

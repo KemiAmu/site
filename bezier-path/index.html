@@ -38,10 +38,18 @@
 							if (!point) return [0, 0];
 							return [
 								point[0] === null || isNaN(point[0])
-									? (i === 1 ? this.points[0][0] : i === 2 ? this.points[3][0] : 0)
+									? i === 1
+										? this.points[0][0]
+										: i === 2
+											? this.points[3][0]
+											: 0
 									: point[0],
 								point[1] === null || isNaN(point[1])
-									? (i === 1 ? this.points[0][1] : i === 2 ? this.points[3][1] : 0)
+									? i === 1
+										? this.points[0][1]
+										: i === 2
+											? this.points[3][1]
+											: 0
 									: point[1],
 							];
 						});
@@ -238,19 +246,16 @@
 				<div>
 					<article>
 						<header>
-							<h3>Start Point</h3>
+							<h2>Start Point</h2>
 						</header>
 						<label>
-							First Point X
+							Point
 							<input
 								type="number"
 								x-model.number="points[0][0]"
 								@input="update()"
 								placeholder="X"
 							/>
-						</label>
-						<label>
-							First Point Y
 							<input
 								type="number"
 								x-model.number="points[0][1]"
@@ -259,16 +264,13 @@
 							/>
 						</label>
 						<label>
-							Control Handle X
+							Control Handle
 							<input
 								type="number"
 								x-model.number="points[1][0]"
 								@input="update()"
 								placeholder="X"
 							/>
-						</label>
-						<label>
-							Control Handle Y
 							<input
 								type="number"
 								x-model.number="points[1][1]"
@@ -282,19 +284,16 @@
 				<div>
 					<article>
 						<header>
-							<h3>End Point</h3>
+							<h2>End Point</h2>
 						</header>
 						<label>
-							Second Point X
+							Point
 							<input
 								type="number"
 								x-model.number="points[3][0]"
 								@input="update()"
 								placeholder="X"
 							/>
-						</label>
-						<label>
-							Second Point Y
 							<input
 								type="number"
 								x-model.number="points[3][1]"
@@ -303,16 +302,13 @@
 							/>
 						</label>
 						<label>
-							Control Handle X
+							Control Handle
 							<input
 								type="number"
 								x-model.number="points[2][0]"
 								@input="update()"
 								placeholder="X"
 							/>
-						</label>
-						<label>
-							Control Handle Y
 							<input
 								type="number"
 								x-model.number="points[2][1]"

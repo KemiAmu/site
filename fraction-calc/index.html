@@ -59,9 +59,22 @@
 					},
 
 					calculate() {
-						if ((this.x1 !== null && this.y1 !== null) || (this.x2 !== null && this.y2 !== null)) {
-							const dx = this.x2 !== null ? (this.x1 !== null ? this.x2 - this.x1 : this.x2) : this.x1;
-							const dy = this.y2 !== null ? (this.y1 !== null ? this.y2 - this.y1 : this.y2) : this.y1;
+						if (
+							(this.x1 !== null && this.y1 !== null) ||
+							(this.x2 !== null && this.y2 !== null)
+						) {
+							const dx =
+								this.x2 !== null
+									? this.x1 !== null
+										? this.x2 - this.x1
+										: this.x2
+									: this.x1;
+							const dy =
+								this.y2 !== null
+									? this.y1 !== null
+										? this.y2 - this.y1
+										: this.y2
+									: this.y1;
 
 							this.results = this.convergentFraction(
 								Math.abs(dx),
@@ -88,14 +101,36 @@
 			</hgroup>
 
 			<div class="grid">
-				<div>
-					<label>Point 1</label>
-					<input type="number" x-model.number="x1" placeholder="X" @input="calculate()" />
-					<input type="number" x-model.number="y1" placeholder="Y" @input="calculate()" />
+				<article>
+					<label
+						>Point 1
 
-					<label>Point 2</label>
-					<input type="number" x-model.number="x2" placeholder="X" @input="calculate()" />
-					<input type="number" x-model.number="y2" placeholder="Y" @input="calculate()" />
+						<input
+							type="number"
+							x-model.number="x1"
+							placeholder="X"
+							@input="calculate()" />
+						<input
+							type="number"
+							x-model.number="y1"
+							placeholder="Y"
+							@input="calculate()"
+					/></label>
+
+					<label
+						>Point 2
+
+						<input
+							type="number"
+							x-model.number="x2"
+							placeholder="X"
+							@input="calculate()" />
+						<input
+							type="number"
+							x-model.number="y2"
+							placeholder="Y"
+							@input="calculate()"
+					/></label>
 
 					<label for="step">Step</label>
 					<input
@@ -106,7 +141,7 @@
 						value="10"
 						@input="calculate()"
 					/>
-				</div>
+				</article>
 				<div>
 					<h3>Result</h3>
 					<div id="result">

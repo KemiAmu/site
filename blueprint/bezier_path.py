@@ -24,7 +24,7 @@ def plot_line(
 	sx = 1 if p0[0] < p1[0] else -1
 	sy = 1 if p0[1] < p1[1] else -1
 	
-	# Bresenham 算法只用作以微分方式对结构代数排序；是的，只是排序而以 :3
+	# Bresenham 算法只用作以微分方式对结构代数排序；是的，只是用来排序 :3
 	err = .5 * (dx-dy) + dy * sx * (p0[0]-x) - dx * sy * (p0[1]-y)
 
 	points = []
@@ -75,41 +75,34 @@ def adaptive_bezier_path(
 	return curve
 
 from itertools import groupby, pairwise
-from typing import Iterator
 
-def cumulative_bezier(
+def rasterized_bezier_steps(
 	p0: tuple[float, float],
 	p1: tuple[float, float],
 	p2: tuple[float, float],
 	p3: tuple[float, float]
 ) -> list[tuple[int, int]]:
 	"""
-	Generates pixel-perfect cubic Bezier path by combining adaptive curve approximation
-	with Bresenham line rasterization. Returns a compressed representation of movement
-	vectors where consecutive same-direction moves are merged, stored as (delta, count)
-	tuples. The algorithm preserves curve smoothness while optimizing for plotting
-	efficiency by eliminating redundant intermediate steps.
+	Generates a run-length encoded representation of the rasterized cubic Bezier curve.
 	"""
 
-	def direction_changes(points: list[tuple[int, int]]) -> Iterator[int]:
-		dx, dy = 0, 0
-		for (x0, y0), (x1, y1) in pairwise(points):
-			ndx, ndy = x1 - x0, y1 - y0
-			if ndx * dy != ndy * dx:
-				yield dx or dy
-				dx, dy = 0, 0
-			dx += ndx
-			dy += ndy
-		yield dx or dy
-
-	bezier = adaptive_bezier_path(p0, p1, p2, p3)
 	points = [(round(p0[0]), round(p0[1]))] + [
 		point
-		for start, end in pairwise(bezier)
+		for start, end in pairwise(adaptive_bezier_path(p0, p1, p2, p3))
 		for point in plot_line((start[0], start[1]), (end[0], end[1]))
 	]
-
-	return [(k, len(list(g))) for k, g in groupby(direction_changes(points))]
+	steps = [
+		sum(1 for _ in group)
+		for _, group in groupby(
+			(x1 - x0, y1 - y0)
+			for (x0, y0), (x1, y1) in pairwise(points)
+		)
+	]
+	
+	return [
+		(key, sum(1 for _ in group))
+		for key, group in groupby(steps)
+	]
 
 
 

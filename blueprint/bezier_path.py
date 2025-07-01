@@ -83,7 +83,8 @@ def rasterized_bezier_steps(
 	p3: tuple[float, float]
 ) -> list[tuple[int, int]]:
 	"""
-	Generates a run-length encoded representation of the rasterized cubic Bezier curve.
+	Generates a pixel-discrete representation of a cubic Bezier curve and converts it into
+	an alternating-axis step encoding.
 	"""
 
 	points = [(round(p0[0]), round(p0[1]))] + [

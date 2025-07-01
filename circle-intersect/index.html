@@ -92,88 +92,83 @@
 			</hgroup>
 
 			<div class="grid">
-				<!-- Left Column: Inputs -->
+				<!-- Circle 1 Inputs -->
 				<div>
-					<div class="grid">
-						<!-- Circle 1 Inputs -->
-						<div>
-							<article>
-								<header>
-									<h2>Circle 1</h2>
-								</header>
-								<label>
-									Center X
-									<input
-										type="number"
-										x-model.number="circle1.x"
-										placeholder="X"
-									/>
-								</label>
-								<label>
-									Center Y
-									<input
-										type="number"
-										x-model.number="circle1.y"
-										placeholder="Y"
-									/>
-								</label>
-								<label>
-									Radius
-									<input
-										type="number"
-										x-model.number="circle1.r"
-										min="0"
-										step="0.1"
-										placeholder="Radius"
-									/>
-								</label>
-							</article>
-						</div>
-
-						<!-- Circle 2 Inputs -->
-						<div>
-							<article>
-								<header>
-									<h2>Circle 2</h2>
-								</header>
-								<label>
-									Center X
-									<input
-										type="number"
-										x-model.number="circle2.x"
-										placeholder="X"
-									/>
-								</label>
-								<label>
-									Center Y
-									<input
-										type="number"
-										x-model.number="circle2.y"
-										placeholder="Y"
-									/>
-								</label>
-								<label>
-									Radius
-									<input
-										type="number"
-										x-model.number="circle2.r"
-										min="0"
-										step="0.1"
-										placeholder="Radius"
-									/>
-								</label>
-							</article>
-						</div>
-					</div>
-
-					<div>
-						<button @click="calculate()" class="primary">
-							Calculate
-						</button>
-					</div>
+					<article>
+						<header>
+							<h2>Circle 1</h2>
+						</header>
+						<label>
+							Center X
+							<input
+								type="number"
+								x-model.number="circle1.x"
+								@input="calculate()"
+								placeholder="X"
+							/>
+						</label>
+						<label>
+							Center Y
+							<input
+								type="number"
+								x-model.number="circle1.y"
+								@input="calculate()"
+								placeholder="Y"
+							/>
+						</label>
+						<label>
+							Radius
+							<input
+								type="number"
+								x-model.number="circle1.r"
+								min="0"
+								step="0.1"
+								@input="calculate()"
+								placeholder="Radius"
+							/>
+						</label>
+					</article>
 				</div>
 
-				<!-- Right Column: Results -->
+				<!-- Circle 2 Inputs -->
+				<div>
+					<article>
+						<header>
+							<h2>Circle 2</h2>
+						</header>
+						<label>
+							Center X
+							<input
+								type="number"
+								x-model.number="circle2.x"
+								@input="calculate()"
+								placeholder="X"
+							/>
+						</label>
+						<label>
+							Center Y
+							<input
+								type="number"
+								x-model.number="circle2.y"
+								@input="calculate()"
+								placeholder="Y"
+							/>
+						</label>
+						<label>
+							Radius
+							<input
+								type="number"
+								x-model.number="circle2.r"
+								min="0"
+								step="0.1"
+								@input="calculate()"
+								placeholder="Radius"
+							/>
+						</label>
+					</article>
+				</div>
+
+				<!-- Results -->
 				<div>
 					<article>
 						<header>

@@ -324,15 +324,17 @@
 					<table>
 						<thead>
 							<tr>
-								<th>Steps</th>
-								<th>Count</th>
+								<th>Step length</th>
+								<th>Power</th>
 							</tr>
 						</thead>
 						<tbody>
 							<template x-for="step in steps">
 								<tr>
 									<td x-text="step[0]"></td>
-									<td x-text="step[1]"></td>
+									<td
+										x-text="step[1] === 1 ? '' : step[1]"
+									></td>
 								</tr>
 							</template>
 						</tbody>

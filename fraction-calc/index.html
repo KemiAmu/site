@@ -59,10 +59,13 @@
 					},
 
 					calculate() {
-						if (this.x1 !== null && this.y1 !== null && this.x2 !== null && this.y2 !== null) {
+						if ((this.x1 !== null && this.y1 !== null) || (this.x2 !== null && this.y2 !== null)) {
+							const dx = this.x2 !== null ? (this.x1 !== null ? this.x2 - this.x1 : this.x2) : this.x1;
+							const dy = this.y2 !== null ? (this.y1 !== null ? this.y2 - this.y1 : this.y2) : this.y1;
+
 							this.results = this.convergentFraction(
-								Math.abs(this.x1 - this.x2),
-								Math.abs(this.y1 - this.y2),
+								Math.abs(dx),
+								Math.abs(dy),
 								this.step,
 							).map(([p, q]) => ({
 								fraction: `${p}/${q}`,

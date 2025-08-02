@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html x-data="app">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,7 +8,7 @@
 			content="Find simple fractions that approximate the ratio between two points with this calculator."
 		/>
 		<meta name="author" content="Kemi-Amu" />
-		<title>Fraction Approximation Calculator</title>
+		<title x-text="t('Fraction Approximation Calculator')"></title>
 		<link rel="icon" href="../assets/favicon.svg" />
 		<link
 			rel="stylesheet"
@@ -25,6 +25,51 @@
 		</style>
 		<script>
 			document.addEventListener("alpine:init", () => {
+				Alpine.data("app", () => ({
+					lang: localStorage.getItem("lang"),
+					translations: {
+						"Fraction Approximation Calculator": {
+							zh: "分数近似计算器",
+							de: "Bruch-Approximationsrechner",
+						},
+						"Find simple fractions that approximate the ratio between two points": {
+							zh: "寻找近似两点间比例的简单分数",
+							de: "Einfache Brüche finden, die Verhältnisse zwischen zwei Punkten annähern",
+						},
+						"Point 1": {
+							zh: "点1",
+							de: "Punkt 1",
+						},
+						"Point 2": {
+							zh: "点2",
+							de: "Punkt 2",
+						},
+						"Step": {
+							zh: "步数",
+							de: "Schritte",
+						},
+						"Result": {
+							zh: "结果",
+							de: "Ergebnis",
+						},
+						"Fraction": {
+							zh: "分数",
+							de: "Bruch",
+						},
+						"Value": {
+							zh: "值",
+							de: "Wert",
+						},
+						"← Back to Home": {
+							zh: "← 返回首页",
+							de: "← Zurück zur Startseite",
+						},
+					},
+					t(key) {
+						return this.translations[key][this.lang] || key;
+					},
+				}));
+
 				Alpine.data("approximator", () => ({
 					x1: null,
 					y1: null,
@@ -92,19 +137,14 @@
 	</head>
 	<body class="container">
 		<main x-data="approximator">
-			<hgroup>
-				<h1>Rational Approximation Calculator</h1>
-				<h2>
-					Find simple fractions that approximate the ratio between two
-					points
-				</h2>
+			<hgroup></hgroup>
+				<h1 x-text="t('Fraction Approximation Calculator')"></h1>
+				<h2 x-text="t('Find simple fractions that approximate the ratio between two points')"></h2>
 			</hgroup>
 
 			<div class="grid">
 				<article>
-					<label
-						>Point 1
-
+					<label x-text="t('Point 1')">
 						<input
 							type="number"
 							x-model.number="x1"
@@ -117,9 +157,7 @@
 							@input="calculate()"
 					/></label>
 
-					<label
-						>Point 2
-
+					<label x-text="t('Point 2')">
 						<input
 							type="number"
 							x-model.number="x2"
@@ -132,7 +170,7 @@
 							@input="calculate()"
 					/></label>
 
-					<label for="step">Step</label>
+					<label for="step" x-text="t('Step')"></label>
 					<input
 						type="number"
 						id="step"
@@ -143,13 +181,13 @@
 					/>
 				</article>
 				<div>
-					<h3>Result</h3>
+					<h3 x-text="t('Result')"></h3>
 					<div id="result">
 						<table>
 							<thead>
 								<tr>
-									<th>Fraction</th>
-									<th>Value</th>
+									<th x-text="t('Fraction')"></th>
+									<th x-text="t('Value')"></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -166,7 +204,20 @@
 			</div>
 		</main>
 		<footer>
-			<p><a href="../">← Back to Home</a></p>
+			<p><a href="../" x-text="t('← Back to Home')"></a></p>
+			<p></p>
+				<a @click="lang = 'en'; localStorage.setItem('lang', 'en')">
+					English
+				</a>
+				/
+				<a @click="lang = 'zh'; localStorage.setItem('lang', 'zh')">
+					中文
+				</a>
+				/
+				<a @click="lang = 'de'; localStorage.setItem('lang', 'de')">
+					Deutsch
+				</a>
+			</p>
 		</footer>
 	</body>
 </html>

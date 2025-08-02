@@ -1,68 +1,160 @@
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta
-			name="description"
-			content="Kemi's collection of handy calculators and tools for various purposes."
-		/>
-		<meta name="author" content="Kemi-Amu" />
-		<title>Rotating Kemi...</title>
-		<link rel="icon" href="assets/favicon.svg" />
-		<link
-			rel="stylesheet"
-			href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
-		/>
-	</head>
-	<body class="container">
-		<main>
-			<hgroup>
-				<h1>Rotating Kemi...</h1>
-				<h2>Kemi's Junkyard</h2>
-			</hgroup>
+<html x-data="app">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="Kemi's collection of handy calculators and tools for various purposes."
+        />
+        <meta name="author" content="Kemi-Amu" />
+        <title>Rotating Kemi...</title>
+        <link rel="icon" href="assets/favicon.svg" />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+        />
+        <script
+            defer
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+        ></script>
+        <script>
+            document.addEventListener("alpine:init", () => {
+                Alpine.data("app", () => ({
+                    lang: localStorage.getItem("lang"),
+                    translations: {
+                        "Rotating Kemi...": {
+                            zh: "臭猫.gif",
+                            de: "Drehende Kemi...",
+                        },
+                        "Kemi's Junkyard": {
+                            zh: "凯米的垃圾堆",
+                            de: "Kemis Schrottplatz",
+                        },
+                        "Coordinate Conversion Tool": {
+                            zh: "坐标转换工具",
+                            de: "Koordinaten-Umwandlungswerkzeug",
+                        },
+                        "Convert Minecraft coordinates between different units":
+                            {
+                                zh: "在不同单位之间转换Minecraft坐标",
+                                de: "Minecraft-Koordinaten zwischen verschiedenen Einheiten umwandeln",
+                            },
+                        "Fraction Approximation Calculator": {
+                            zh: "分数近似计算器",
+                            de: "Bruch-Approximationsrechner",
+                        },
+                        "Find simple fractions that approximate ratios between points":
+                            {
+                                zh: "寻找近似两点间比例的简单分数",
+                                de: "Einfache Brüche finden, die Verhältnisse zwischen Punkten annähern",
+                            },
+                        "Circle Intersection Calculator": {
+                            zh: "圆相交计算器",
+                            de: "Kreisschnittpunkt-Rechner",
+                        },
+                        "Calculate intersection points between two circles": {
+                            zh: "计算两个圆的交点",
+                            de: "Schnittpunkte zwischen zwei Kreisen berechnen",
+                        },
+                        "Ender Pearl Intersection Calculator": {
+                            zh: "末影珍珠交点计算器",
+                            de: "Enderperlen-Schnittpunkt-Rechner",
+                        },
+                        "Calculate stronghold location from two pearl throws": {
+                            zh: "通过两次珍珠投掷计算要塞位置",
+                            de: "Festungsposition aus zwei Perlenwürfen berechnen",
+                        },
+                        "Bezier Curve Rasterizer": {
+                            zh: "贝塞尔曲线光栅化器",
+                            de: "Bezier-Kurven-Rasterisierer",
+                        },
+                        "Generate rasterized paths for cubic Bezier curves": {
+                            zh: "生成三次贝塞尔曲线的光栅化路径",
+                            de: "Rasterisierte Pfade für kubische Bezier-Kurven generieren",
+                        },
+                    },
+                    t(key) {
+                        return this.translations[key][this.lang] || key;
+                    },
+                }));
+            });
+        </script>
+    </head>
+    <body class="container">
+        <main>
+            <hgroup>
+                <h1 x-text="t('Rotating Kemi...')"></h1>
+                <h2 x-text="t('Kemi\'s Junkyard')"></h2>
+            </hgroup>
 
-			<div class="grid">
-				<article>
-					<a href="coords/">
-						<h3>Coordinate Conversion Tool</h3>
-					</a>
-					<p>Convert Minecraft coordinates between different units</p>
-				</article>
+            <div class="grid">
+                <article>
+                    <a href="coords/">
+                        <h3 x-text="t('Coordinate Conversion Tool')"></h3>
+                    </a>
+                    <p
+                        x-text="t('Convert Minecraft coordinates between different units')"
+                    ></p>
+                </article>
 
-				<article>
-					<a href="fraction-calc/">
-						<h3>Fraction Approximation Calculator</h3>
-					</a>
-					<p>
-						Find simple fractions that approximate ratios between
-						points
-					</p>
-				</article>
+                <article>
+                    <a href="fraction-calc/">
+                        <h3
+                            x-text="t('Fraction Approximation Calculator')"
+                        ></h3>
+                    </a>
+                    <p
+                        x-text="t('Find simple fractions that approximate ratios between points')"
+                    ></p>
+                </article>
 
-				<article>
-					<a href="circle-intersect/">
-						<h3>Circle Intersection Calculator</h3>
-					</a>
-					<p>Calculate intersection points between two circles</p>
-				</article>
-			</div>
+                <article>
+                    <a href="circle-intersect/">
+                        <h3 x-text="t('Circle Intersection Calculator')"></h3>
+                    </a>
+                    <p
+                        x-text="t('Calculate intersection points between two circles')"
+                    ></p>
+                </article>
+            </div>
 
-			<div class="grid">
-				<article>
-					<a href="pearl-intersect/">
-						<h3>Ender Pearl Intersection Calculator</h3>
-					</a>
-					<p>Calculate stronghold location from two pearl throws</p>
-				</article>
-				<article>
-					<a href="bezier-path/">
-						<h3>Bezier Curve Rasterizer</h3>
-					</a>
-					<p>Generate rasterized paths for cubic Bezier curves</p>
-				</article>
-				<div></div>
-			</div>
-		</main>
-	</body>
+            <div class="grid">
+                <article>
+                    <a href="pearl-intersect/">
+                        <h3
+                            x-text="t('Ender Pearl Intersection Calculator')"
+                        ></h3>
+                    </a>
+                    <p
+                        x-text="t('Calculate stronghold location from two pearl throws')"
+                    ></p>
+                </article>
+                <article>
+                    <a href="bezier-path/">
+                        <h3 x-text="t('Bezier Curve Rasterizer')"></h3>
+                    </a>
+                    <p
+                        x-text="t('Generate rasterized paths for cubic Bezier curves')"
+                    ></p>
+                </article>
+                <div></div>
+            </div>
+        </main>
+        <footer>
+            <p>
+                <a @click="lang = 'en'; localStorage.setItem('lang', 'en')">
+                    English
+                </a>
+                /
+                <a @click="lang = 'zh'; localStorage.setItem('lang', 'zh')">
+                    中文
+                </a>
+                /
+                <a @click="lang = 'de'; localStorage.setItem('lang', 'de')">
+                    Deutsch
+                </a>
+            </p>
+        </footer>
+    </body>
 </html>

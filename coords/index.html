@@ -1,279 +1,410 @@
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta
-			name="description"
-			content="Convert Minecraft coordinates between different units with this handy tool."
-		/>
-		<meta name="author" content="Kemi-Amu" />
-		<title>MC Coordinate Conversion Tool</title>
-		<link rel="icon" href="../assets/favicon.svg" />
-		<link
-			rel="stylesheet"
-			href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
-		/>
-		<script
-			defer
-			src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
-		></script>
-		<script>
-			document.addEventListener("alpine:init", () => {
-				Alpine.data("app", () => ({
-					x: null,
-					z: null,
-					MCA_SIZE: 512,
-					MAP_SIZE: 128,
-					CHUNK_SIZE: 16,
-					NETHER_RATIO: 8,
+<html x-data="app">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="Convert Minecraft coordinates between different units with this handy tool."
+        />
+        <meta name="author" content="Kemi-Amu" />
+        <title>MC Coordinate Conversion Tool</title>
+        <link rel="icon" href="../assets/favicon.svg" />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+        />
+        <script
+            defer
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+        ></script>
+        <script>
+            document.addEventListener("alpine:init", () => {
+                Alpine.data("app", () => ({
+                    lang: localStorage.getItem("lang"),
+                    translations: {
+                        "MC Coordinate Conversion Tool": {
+                            zh: "MC坐标转换工具",
+                            de: "MC-Koordinaten-Umwandlungswerkzeug",
+                        },
+                        "Convert Minecraft coordinates between units": {
+                            zh: "在不同单位之间转换Minecraft坐标",
+                            de: "Minecraft-Koordinaten zwischen Einheiten umwandeln",
+                        },
+                        "X Coordinate": {
+                            zh: "X坐标",
+                            de: "X-Koordinate",
+                        },
+                        "Z Coordinate": {
+                            zh: "Z坐标",
+                            de: "Z-Koordinate",
+                        },
+                        "Enter X value": {
+                            zh: "输入X值",
+                            de: "X-Wert eingeben",
+                        },
+                        "Enter Z value": {
+                            zh: "输入Z值",
+                            de: "Z-Wert eingeben",
+                        },
+                        Nether: {
+                            zh: "下界",
+                            de: "Nether",
+                        },
+                        "Coordinates correspondence between Overworld and Nether, commonly used for transportation construction":
+                            {
+                                zh: "主世界与下界坐标对应关系，常用于交通建设",
+                                de: "Koordinatenkorrespondenz zwischen Oberwelt und Nether, häufig für Transportbau verwendet",
+                            },
+                        Reverse: {
+                            zh: "反向转换",
+                            de: "Umgekehrte Umwandlung",
+                        },
+                        Chunk: {
+                            zh: "区块",
+                            de: "Chunk",
+                        },
+                        "Correspondence between coordinates and chunks, commonly used for facility construction":
+                            {
+                                zh: "坐标与区块对应关系，常用于设施建设",
+                                de: "Korrespondenz zwischen Koordinaten und Chunks, häufig für Anlagenbau verwendet",
+                            },
+                        Relative: {
+                            zh: "相对位置",
+                            de: "Relative Position",
+                        },
+                        Range: {
+                            zh: "范围",
+                            de: "Bereich",
+                        },
+                        "Map Block": {
+                            zh: "地图区块",
+                            de: "Kartenblock",
+                        },
+                        "Correspondence between coordinates and level 0 maps, commonly used for making map art":
+                            {
+                                zh: "坐标与0级地图对应关系，常用于制作地图画",
+                                de: "Korrespondenz zwischen Koordinaten und Level-0-Karten, häufig für Kartenkunst verwendet",
+                            },
+                        "Region File": {
+                            zh: "区域文件",
+                            de: "Regionsdatei",
+                        },
+                        "For converting .mca files in saves": {
+                            zh: "用于转换存档中的.mca文件",
+                            de: "Zum Konvertieren von .mca-Dateien in Speicherständen",
+                        },
+                        "Region file": {
+                            zh: "区域文件",
+                            de: "Regionsdatei",
+                        },
+                        "← Back to Home": {
+                            zh: "← 返回首页",
+                            de: "← Zurück zur Startseite",
+                        },
+                        "Unofficial Minecraft tool. Not affiliated with Mojang or Microsoft.":
+                            {
+                                zh: "非官方Minecraft工具。与Mojang或微软无关。",
+                                de: "Inoffizielles Minecraft-Tool. Nicht mit Mojang oder Microsoft verbunden.",
+                            },
+                    },
+                    t(key) {
+                        return this.translations[key][this.lang] || key;
+                    },
+                    x: null,
+                    z: null,
+                    MCA_SIZE: 512,
+                    MAP_SIZE: 128,
+                    CHUNK_SIZE: 16,
+                    NETHER_RATIO: 8,
 
-					getCoords() {
-						const coords = [];
-						if (this.x) coords.push(this.x);
-						if (this.z) coords.push(this.z);
-						return coords;
-					},
+                    getCoords() {
+                        const coords = [];
+                        if (this.x) coords.push(this.x);
+                        if (this.z) coords.push(this.z);
+                        return coords;
+                    },
 
-					_format(transform) {
-						const coords = this.getCoords();
-						return coords.length
-							? coords.map(transform).join(", ")
-							: "";
-					},
+                    _format(transform) {
+                        const coords = this.getCoords();
+                        return coords.length
+                            ? coords.map(transform).join(", ")
+                            : "";
+                    },
 
-					nether() {
-						return this._format((c) =>
-							Math.floor(c / this.NETHER_RATIO).toFixed(0),
-						);
-					},
+                    nether() {
+                        return this._format((c) =>
+                            Math.floor(c / this.NETHER_RATIO).toFixed(0),
+                        );
+                    },
 
-					anether() {
-						return this._format((c) =>
-							(c * this.NETHER_RATIO).toFixed(2),
-						);
-					},
+                    anether() {
+                        return this._format((c) =>
+                            (c * this.NETHER_RATIO).toFixed(2),
+                        );
+                    },
 
-					chunk() {
-						return this._format((c) =>
-							Math.floor(c / this.CHUNK_SIZE).toFixed(0),
-						);
-					},
+                    chunk() {
+                        return this._format((c) =>
+                            Math.floor(c / this.CHUNK_SIZE).toFixed(0),
+                        );
+                    },
 
-					achunk() {
-						return this._format((c) =>
-							(c * this.CHUNK_SIZE).toFixed(2),
-						);
-					},
+                    achunk() {
+                        return this._format((c) =>
+                            (c * this.CHUNK_SIZE).toFixed(2),
+                        );
+                    },
 
-					chunk_rel() {
-						return this._format((c) => {
-							const chunkStart =
-								Math.floor(c / this.CHUNK_SIZE) *
-								this.CHUNK_SIZE;
-							return (c - chunkStart).toFixed(2);
-						});
-					},
+                    chunk_rel() {
+                        return this._format((c) => {
+                            const chunkStart =
+                                Math.floor(c / this.CHUNK_SIZE) *
+                                this.CHUNK_SIZE;
+                            return (c - chunkStart).toFixed(2);
+                        });
+                    },
 
-					chunk_start() {
-						return this._format((c) =>
-							(
-								Math.floor(c / this.CHUNK_SIZE) *
-								this.CHUNK_SIZE
-							).toFixed(2),
-						);
-					},
+                    chunk_start() {
+                        return this._format((c) =>
+                            (
+                                Math.floor(c / this.CHUNK_SIZE) *
+                                this.CHUNK_SIZE
+                            ).toFixed(2),
+                        );
+                    },
 
-					chunk_end() {
-						return this._format((c) =>
-							(
-								Math.floor(c / this.CHUNK_SIZE) *
-									this.CHUNK_SIZE +
-								this.CHUNK_SIZE
-							).toFixed(2),
-						);
-					},
+                    chunk_end() {
+                        return this._format((c) =>
+                            (
+                                Math.floor(c / this.CHUNK_SIZE) *
+                                    this.CHUNK_SIZE +
+                                this.CHUNK_SIZE
+                            ).toFixed(2),
+                        );
+                    },
 
-					map() {
-						return this._format((c) =>
-							Math.floor(c / this.MAP_SIZE + 0.5).toFixed(0),
-						);
-					},
+                    map() {
+                        return this._format((c) =>
+                            Math.floor(c / this.MAP_SIZE + 0.5).toFixed(0),
+                        );
+                    },
 
-					amap() {
-						return this._format((c) =>
-							((c - 0.5) * this.MAP_SIZE).toFixed(2),
-						);
-					},
+                    amap() {
+                        return this._format((c) =>
+                            ((c - 0.5) * this.MAP_SIZE).toFixed(2),
+                        );
+                    },
 
-					map_rel() {
-						return this._format((c) => {
-							const mapCenter =
-								Math.floor(c / this.MAP_SIZE + 0.5) *
-									this.MAP_SIZE -
-								this.MAP_SIZE / 2;
-							return (c - mapCenter).toFixed(2);
-						});
-					},
+                    map_rel() {
+                        return this._format((c) => {
+                            const mapCenter =
+                                Math.floor(c / this.MAP_SIZE + 0.5) *
+                                    this.MAP_SIZE -
+                                this.MAP_SIZE / 2;
+                            return (c - mapCenter).toFixed(2);
+                        });
+                    },
 
-					map_start() {
-						return this._format((c) =>
-							(
-								Math.floor(c / this.MAP_SIZE + 0.5) *
-									this.MAP_SIZE -
-								this.MAP_SIZE / 2
-							).toFixed(2),
-						);
-					},
+                    map_start() {
+                        return this._format((c) =>
+                            (
+                                Math.floor(c / this.MAP_SIZE + 0.5) *
+                                    this.MAP_SIZE -
+                                this.MAP_SIZE / 2
+                            ).toFixed(2),
+                        );
+                    },
 
-					map_end() {
-						return this._format((c) =>
-							(
-								Math.floor(c / this.MAP_SIZE + 0.5) *
-									this.MAP_SIZE +
-								this.MAP_SIZE / 2
-							).toFixed(2),
-						);
-					},
+                    map_end() {
+                        return this._format((c) =>
+                            (
+                                Math.floor(c / this.MAP_SIZE + 0.5) *
+                                    this.MAP_SIZE +
+                                this.MAP_SIZE / 2
+                            ).toFixed(2),
+                        );
+                    },
 
-					mca() {
-						return this._format((c) =>
-							Math.floor(c / this.MCA_SIZE).toFixed(0),
-						);
-					},
-				}));
-			});
-		</script>
-	</head>
-	<body class="container" x-data="app">
-		<main>
-			<hgroup>
-				<h1>MC Coordinate Conversion Tool</h1>
-				<h2>Convert Minecraft coordinates between units</h2>
-			</hgroup>
+                    mca() {
+                        return this._format((c) =>
+                            Math.floor(c / this.MCA_SIZE).toFixed(0),
+                        );
+                    },
+                }));
+            });
+        </script>
+    </head>
+    <body class="container" x-data="app">
+        <main>
+            <hgroup>
+                <h1 x-text="t('MC Coordinate Conversion Tool')"></h1>
+                <h2
+                    x-text="t('Convert Minecraft coordinates between units')"
+                ></h2>
+            </hgroup>
 
-			<!-- Input fields -->
-			<article>
-				<div class="grid">
-					<!-- X -->
-					<div>
-						<label>
-							X Coordinate
-							<input
-								type="number"
-								placeholder="Enter X value"
-								x-model.number="x"
-							/>
-						</label>
-					</div>
+            <!-- Input fields -->
+            <article>
+                <div class="grid">
+                    <!-- X -->
+                    <div>
+                        <label>
+                            <span x-text="t('X Coordinate')"></span>
+                            <input
+                                type="number"
+                                :placeholder="t('Enter X value')"
+                                x-model.number="x"
+                            />
+                        </label>
+                    </div>
 
-					<!-- Z -->
-					<div>
-						<label>
-							Z Coordinate
-							<input
-								type="number"
-								placeholder="Enter Z value"
-								x-model.number="z"
-							/>
-						</label>
-					</div>
-				</div>
-			</article>
+                    <!-- Z -->
+                    <div>
+                        <label>
+                            <span x-text="t('Z Coordinate')"></span>
+                            <input
+                                type="number"
+                                :placeholder="t('Enter Z value')"
+                                x-model.number="z"
+                            />
+                        </label>
+                    </div>
+                </div>
+            </article>
 
-			<!-- Results -->
-			<div class="grid">
-				<!-- Nether -->
-				<div>
-					<article>
-						<header>
-							<h2>Nether</h2>
-							<p>
-								Coordinates correspondence between Overworld and
-								Nether, commonly used for transportation
-								construction
-							</p>
-						</header>
-						<p>Nether: <span x-text="nether"></span></p>
-						<p>Reverse: <span x-text="anether"></span></p>
-					</article>
-				</div>
+            <!-- Results -->
+            <div class="grid">
+                <!-- Nether -->
+                <div>
+                    <article>
+                        <header>
+                            <h2 x-text="t('Nether')"></h2>
+                            <p
+                                x-text="t('Coordinates correspondence between Overworld and Nether, commonly used for transportation construction')"
+                            ></p>
+                        </header>
+                        <p>
+                            <span x-text="t('Nether')"></span>:
+                            <span x-text="nether"></span>
+                        </p>
+                        <p>
+                            <span x-text="t('Reverse')"></span>:
+                            <span x-text="anether"></span>
+                        </p>
+                    </article>
+                </div>
 
-				<!-- Chunk -->
-				<div>
-					<article>
-						<header>
-							<h2>Chunk</h2>
-							<p>
-								Correspondence between coordinates and chunks,
-								commonly used for facility construction
-							</p>
-						</header>
-						<div class="grid">
-							<div>
-								<p>Chunk: <span x-text="chunk"></span></p>
-								<p>
-									Relative: <span x-text="chunk_rel"></span>
-								</p>
-							</div>
-							<div>
-								<p>Reverse: <span x-text="achunk"></span></p>
-								<p>
-									Range: <span x-text="chunk_start"></span> to
-									<span x-text="chunk_end"></span>
-								</p>
-							</div>
-						</div>
-					</article>
-				</div>
-			</div>
+                <!-- Chunk -->
+                <div>
+                    <article>
+                        <header>
+                            <h2 x-text="t('Chunk')"></h2>
+                            <p
+                                x-text="t('Correspondence between coordinates and chunks, commonly used for facility construction')"
+                            ></p>
+                        </header>
+                        <div class="grid">
+                            <div>
+                                <p>
+                                    <span x-text="t('Chunk')"></span>:
+                                    <span x-text="chunk"></span>
+                                </p>
+                                <p>
+                                    <span x-text="t('Relative')"></span>:
+                                    <span x-text="chunk_rel"></span>
+                                </p>
+                            </div>
+                            <div>
+                                <p>
+                                    <span x-text="t('Reverse')"></span>:
+                                    <span x-text="achunk"></span>
+                                </p>
+                                <p>
+                                    <span x-text="t('Range')"></span>:
+                                    <span x-text="chunk_start"></span>
+                                    <span x-text="t('to')"></span>
+                                    <span x-text="chunk_end"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
 
-			<div class="grid">
-				<!-- Map Block -->
-				<div>
-					<article>
-						<header>
-							<h2>Map Block</h2>
-							<p>
-								Correspondence between coordinates and level 0
-								maps, commonly used for making map art
-							</p>
-						</header>
-						<div class="grid">
-							<div>
-								<p>Map: <span x-text="map"></span></p>
-								<p>Relative: <span x-text="map_rel"></span></p>
-							</div>
-							<div>
-								<p>Reverse: <span x-text="amap"></span></p>
-								<p>
-									Range: <span x-text="map_start"></span> to
-									<span x-text="map_end"></span>
-								</p>
-							</div>
-						</div>
-					</article>
-				</div>
+            <div class="grid">
+                <!-- Map Block -->
+                <div>
+                    <article>
+                        <header>
+                            <h2 x-text="t('Map Block')"></h2>
+                            <p
+                                x-text="t('Correspondence between coordinates and level 0 maps, commonly used for making map art')"
+                            ></p>
+                        </header>
+                        <div class="grid">
+                            <div>
+                                <p>
+                                    <span x-text="t('Map')"></span>:
+                                    <span x-text="map"></span>
+                                </p>
+                                <p>
+                                    <span x-text="t('Relative')"></span>:
+                                    <span x-text="map_rel"></span>
+                                </p>
+                            </div>
+                            <div>
+                                <p>
+                                    <span x-text="t('Reverse')"></span>:
+                                    <span x-text="amap"></span>
+                                </p>
+                                <p>
+                                    <span x-text="t('Range')"></span>:
+                                    <span x-text="map_start"></span>
+                                    <span x-text="t('to')"></span>
+                                    <span x-text="map_end"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </article>
+                </div>
 
-				<!-- Region File -->
-				<div>
-					<article>
-						<header>
-							<h2>Region File</h2>
-							<p>For converting .mca files in saves</p>
-						</header>
-						<p>Region file: <span x-text="mca"></span></p>
-					</article>
-				</div>
-			</div>
-		</main>
+                <!-- Region File -->
+                <div>
+                    <article>
+                        <header>
+                            <h2 x-text="t('Region File')"></h2>
+                            <p
+                                x-text="t('For converting .mca files in saves')"
+                            ></p>
+                        </header>
+                        <p>
+                            <span x-text="t('Region file')"></span>:
+                            <span x-text="mca"></span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </main>
 
-		<footer>
-			<p><a href="../">← Back to Home</a></p>
-			<p>
-				Unofficial Minecraft tool. Not affiliated with Mojang or
-				Microsoft.
-			</p>
-		</footer>
-	</body>
+        <footer>
+            <p><a href="../" x-text="t('← Back to Home')"></a></p>
+            <p
+                x-text="t('Unofficial Minecraft tool. Not affiliated with Mojang or Microsoft.')"
+            ></p>
+            <p>
+                <a @click="lang = 'en'; localStorage.setItem('lang', 'en')">
+                    English
+                </a>
+                /
+                <a @click="lang = 'zh'; localStorage.setItem('lang', 'zh')">
+                    中文
+                </a>
+                /
+                <a @click="lang = 'de'; localStorage.setItem('lang', 'de')">
+                    Deutsch
+                </a>
+            </p>
+        </footer>
+    </body>
 </html>

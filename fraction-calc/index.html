@@ -1,223 +1,226 @@
 <!doctype html>
 <html x-data="app">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta
-			name="description"
-			content="Find simple fractions that approximate the ratio between two points with this calculator."
-		/>
-		<meta name="author" content="Kemi-Amu" />
-		<title x-text="t('Fraction Approximation Calculator')"></title>
-		<link rel="icon" href="../assets/favicon.svg" />
-		<link
-			rel="stylesheet"
-			href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
-		/>
-		<script
-			defer
-			src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
-		></script>
-		<style>
-			input {
-				font-family: monospace;
-			}
-		</style>
-		<script>
-			document.addEventListener("alpine:init", () => {
-				Alpine.data("app", () => ({
-					lang: localStorage.getItem("lang"),
-					translations: {
-						"Fraction Approximation Calculator": {
-							zh: "分数近似计算器",
-							de: "Bruch-Approximationsrechner",
-						},
-						"Find simple fractions that approximate the ratio between two points": {
-							zh: "寻找近似两点间比例的简单分数",
-							de: "Einfache Brüche finden, die Verhältnisse zwischen zwei Punkten annähern",
-						},
-						"Point 1": {
-							zh: "点1",
-							de: "Punkt 1",
-						},
-						"Point 2": {
-							zh: "点2",
-							de: "Punkt 2",
-						},
-						"Step": {
-							zh: "步数",
-							de: "Schritte",
-						},
-						"Result": {
-							zh: "结果",
-							de: "Ergebnis",
-						},
-						"Fraction": {
-							zh: "分数",
-							de: "Bruch",
-						},
-						"Value": {
-							zh: "值",
-							de: "Wert",
-						},
-						"← Back to Home": {
-							zh: "← 返回首页",
-							de: "← Zurück zur Startseite",
-						},
-					},
-					t(key) {
-						return this.translations[key][this.lang] || key;
-					},
-				}));
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="Find simple fractions that approximate the ratio between two points with this calculator."
+        />
+        <meta name="author" content="Kemi-Amu" />
+        <title>Fraction Approximation Calculator</title>
+        <link rel="icon" href="../assets/favicon.svg" />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+        />
+        <script
+            defer
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+        ></script>
+        <style>
+            input {
+                font-family: monospace;
+            }
+        </style>
+        <script>
+            document.addEventListener("alpine:init", () => {
+                Alpine.data("app", () => ({
+                    lang: localStorage.getItem("lang"),
+                    translations: {
+                        "Fraction Approximation Calculator": {
+                            zh: "分数近似计算器",
+                            de: "Bruch-Approximationsrechner",
+                        },
+                        "Find simple fractions that approximate the ratio between two points":
+                            {
+                                zh: "寻找近似两点间比例的简单分数",
+                                de: "Einfache Brüche finden, die Verhältnisse zwischen zwei Punkten annähern",
+                            },
+                        "Point 1": {
+                            zh: "点1",
+                            de: "Punkt 1",
+                        },
+                        "Point 2": {
+                            zh: "点2",
+                            de: "Punkt 2",
+                        },
+                        Step: {
+                            zh: "步数",
+                            de: "Schritte",
+                        },
+                        Result: {
+                            zh: "结果",
+                            de: "Ergebnis",
+                        },
+                        Fraction: {
+                            zh: "分数",
+                            de: "Bruch",
+                        },
+                        Value: {
+                            zh: "值",
+                            de: "Wert",
+                        },
+                        "← Back to Home": {
+                            zh: "← 返回首页",
+                            de: "← Zurück zur Startseite",
+                        },
+                    },
+                    t(key) {
+                        return this.translations[key][this.lang] || key;
+                    },
+                }));
 
-				Alpine.data("approximator", () => ({
-					x1: null,
-					y1: null,
-					x2: null,
-					y2: null,
-					step: 10,
-					results: [],
+                Alpine.data("approximator", () => ({
+                    x1: null,
+                    y1: null,
+                    x2: null,
+                    y2: null,
+                    step: 10,
+                    results: [],
 
-					convergentFraction(x, y, step) {
-						let r = x === y ? 1 : x < y ? x / y : y / x;
+                    convergentFraction(x, y, step) {
+                        let r = x === y ? 1 : x < y ? x / y : y / x;
 
-						let p0 = Math.floor(r),
-							q0 = 1;
-						let p1 = 1,
-							q1 = 0;
+                        let p0 = Math.floor(r),
+                            q0 = 1;
+                        let p1 = 1,
+                            q1 = 0;
 
-						const result = [];
-						while (
-							r - Math.floor(r) > 6.103515625e-5 &&
-							result.length < step
-						) {
-							r = 1 / (r - Math.floor(r));
-							const a = Math.floor(r);
+                        const result = [];
+                        while (
+                            r - Math.floor(r) > 6.103515625e-5 &&
+                            result.length < step
+                        ) {
+                            r = 1 / (r - Math.floor(r));
+                            const a = Math.floor(r);
 
-							[p0, p1] = [a * p0 + p1, p0];
-							[q0, q1] = [a * q0 + q1, q0];
+                            [p0, p1] = [a * p0 + p1, p0];
+                            [q0, q1] = [a * q0 + q1, q0];
 
-							result.push([p0, q0]);
-						}
+                            result.push([p0, q0]);
+                        }
 
-						return result;
-					},
+                        return result;
+                    },
 
-					calculate() {
-						if (
-							(this.x1 !== null && this.y1 !== null) ||
-							(this.x2 !== null && this.y2 !== null)
-						) {
-							const dx =
-								this.x2 !== null
-									? this.x1 !== null
-										? this.x2 - this.x1
-										: this.x2
-									: this.x1;
-							const dy =
-								this.y2 !== null
-									? this.y1 !== null
-										? this.y2 - this.y1
-										: this.y2
-									: this.y1;
+                    calculate() {
+                        if (
+                            (this.x1 !== null && this.y1 !== null) ||
+                            (this.x2 !== null && this.y2 !== null)
+                        ) {
+                            const dx =
+                                this.x2 !== null
+                                    ? this.x1 !== null
+                                        ? this.x2 - this.x1
+                                        : this.x2
+                                    : this.x1;
+                            const dy =
+                                this.y2 !== null
+                                    ? this.y1 !== null
+                                        ? this.y2 - this.y1
+                                        : this.y2
+                                    : this.y1;
 
-							this.results = this.convergentFraction(
-								Math.abs(dx),
-								Math.abs(dy),
-								this.step,
-							).map(([p, q]) => ({
-								fraction: `${p}/${q}`,
-								value: Number((p / q).toFixed(7)),
-							}));
-						}
-					},
-				}));
-			});
-		</script>
-	</head>
-	<body class="container">
-		<main x-data="approximator">
-			<hgroup></hgroup>
-				<h1 x-text="t('Fraction Approximation Calculator')"></h1>
-				<h2 x-text="t('Find simple fractions that approximate the ratio between two points')"></h2>
-			</hgroup>
+                            this.results = this.convergentFraction(
+                                Math.abs(dx),
+                                Math.abs(dy),
+                                this.step,
+                            ).map(([p, q]) => ({
+                                fraction: `${p}/${q}`,
+                                value: Number((p / q).toFixed(7)),
+                            }));
+                        }
+                    },
+                }));
+            });
+        </script>
+    </head>
+    <body class="container">
+        <main x-data="approximator">
+            <hgroup>
+                <h1 x-text="t('Fraction Approximation Calculator')"></h1>
+                <h2
+                    x-text="t('Find simple fractions that approximate the ratio between two points')"
+                ></h2>
+            </hgroup>
 
-			<div class="grid">
-				<article>
-					<label x-text="t('Point 1')">
-						<input
-							type="number"
-							x-model.number="x1"
-							placeholder="X"
-							@input="calculate()" />
-						<input
-							type="number"
-							x-model.number="y1"
-							placeholder="Y"
-							@input="calculate()"
-					/></label>
+            <div class="grid">
+                <article>
+                    <label x-text="t('Point 1')">
+                        <input
+                            type="number"
+                            x-model.number="x1"
+                            placeholder="X"
+                            @input="calculate()" />
+                        <input
+                            type="number"
+                            x-model.number="y1"
+                            placeholder="Y"
+                            @input="calculate()"
+                    /></label>
 
-					<label x-text="t('Point 2')">
-						<input
-							type="number"
-							x-model.number="x2"
-							placeholder="X"
-							@input="calculate()" />
-						<input
-							type="number"
-							x-model.number="y2"
-							placeholder="Y"
-							@input="calculate()"
-					/></label>
+                    <label x-text="t('Point 2')">
+                        <input
+                            type="number"
+                            x-model.number="x2"
+                            placeholder="X"
+                            @input="calculate()" />
+                        <input
+                            type="number"
+                            x-model.number="y2"
+                            placeholder="Y"
+                            @input="calculate()"
+                    /></label>
 
-					<label for="step" x-text="t('Step')"></label>
-					<input
-						type="number"
-						id="step"
-						x-model.number="step"
-						placeholder="Step"
-						value="10"
-						@input="calculate()"
-					/>
-				</article>
-				<div>
-					<h3 x-text="t('Result')"></h3>
-					<div id="result">
-						<table>
-							<thead>
-								<tr>
-									<th x-text="t('Fraction')"></th>
-									<th x-text="t('Value')"></th>
-								</tr>
-							</thead>
-							<tbody>
-								<template x-for="result in results">
-									<tr>
-										<td x-text="result.fraction"></td>
-										<td x-text="result.value"></td>
-									</tr>
-								</template>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</main>
-		<footer>
-			<p><a href="../" x-text="t('← Back to Home')"></a></p>
-			<p></p>
-				<a @click="lang = 'en'; localStorage.setItem('lang', 'en')">
-					English
-				</a>
-				/
-				<a @click="lang = 'zh'; localStorage.setItem('lang', 'zh')">
-					中文
-				</a>
-				/
-				<a @click="lang = 'de'; localStorage.setItem('lang', 'de')">
-					Deutsch
-				</a>
-			</p>
-		</footer>
-	</body>
+                    <label for="step" x-text="t('Step')"></label>
+                    <input
+                        type="number"
+                        id="step"
+                        x-model.number="step"
+                        placeholder="Step"
+                        value="10"
+                        @input="calculate()"
+                    />
+                </article>
+                <div>
+                    <h3 x-text="t('Result')"></h3>
+                    <div id="result">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th x-text="t('Fraction')"></th>
+                                    <th x-text="t('Value')"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="result in results">
+                                    <tr>
+                                        <td x-text="result.fraction"></td>
+                                        <td x-text="result.value"></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <p><a href="../" x-text="t('← Back to Home')"></a></p>
+            <p>
+                <a @click="lang = 'en'; localStorage.setItem('lang', 'en')">
+                    English
+                </a>
+                /
+                <a @click="lang = 'zh'; localStorage.setItem('lang', 'zh')">
+                    中文
+                </a>
+                /
+                <a @click="lang = 'de'; localStorage.setItem('lang', 'de')">
+                    Deutsch
+                </a>
+            </p>
+        </footer>
+    </body>
 </html>

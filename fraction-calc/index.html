@@ -147,31 +147,33 @@
 
             <div class="grid">
                 <article>
-                    <label x-text="t('Point 1')">
-                        <input
-                            type="number"
-                            x-model.number="x1"
-                            placeholder="X"
-                            @input="calculate()" />
-                        <input
-                            type="number"
-                            x-model.number="y1"
-                            placeholder="Y"
-                            @input="calculate()"
-                    /></label>
+                    <label x-text="t('Point 1')"></label>
+                    <input
+                        type="number"
+                        x-model.number="x1"
+                        placeholder="X"
+                        @input="calculate()"
+                    />
+                    <input
+                        type="number"
+                        x-model.number="y1"
+                        placeholder="Y"
+                        @input="calculate()"
+                    />
 
-                    <label x-text="t('Point 2')">
-                        <input
-                            type="number"
-                            x-model.number="x2"
-                            placeholder="X"
-                            @input="calculate()" />
-                        <input
-                            type="number"
-                            x-model.number="y2"
-                            placeholder="Y"
-                            @input="calculate()"
-                    /></label>
+                    <label x-text="t('Point 2')"></label>
+                    <input
+                        type="number"
+                        x-model.number="x2"
+                        placeholder="X"
+                        @input="calculate()"
+                    />
+                    <input
+                        type="number"
+                        x-model.number="y2"
+                        placeholder="Y"
+                        @input="calculate()"
+                    />
 
                     <label for="step" x-text="t('Step')"></label>
                     <input
